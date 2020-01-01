@@ -64,6 +64,19 @@ public:
         return iokit_registry_entry_id(id);
       }
     }
+
+    return std::nullopt;
+  }
+
+  std::optional<std::string> find_name_in_plane(const io_name_t plane) const {
+    if (registry_entry_) {
+      io_name_t name;
+      iokit_return r = IORegistryEntryGetNameInPlane(*registry_entry_, plane, name);
+      if (r) {
+        return name;
+      }
+    }
+
     return std::nullopt;
   }
 

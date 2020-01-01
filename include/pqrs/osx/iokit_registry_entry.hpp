@@ -68,6 +68,18 @@ public:
     return std::nullopt;
   }
 
+  std::optional<std::string> find_name(void) const {
+    if (registry_entry_) {
+      io_name_t name;
+      iokit_return r = IORegistryEntryGetName(*registry_entry_, name);
+      if (r) {
+        return name;
+      }
+    }
+
+    return std::nullopt;
+  }
+
   std::optional<std::string> find_name_in_plane(const io_name_t plane) const {
     if (registry_entry_) {
       io_name_t name;

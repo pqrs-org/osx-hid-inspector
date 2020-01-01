@@ -1,0 +1,13 @@
+{
+  "files.exclude": {
+    "**/build/": true,
+    "**/vendor/cget/": true,
+    ".vscode/browse.vc.*": true
+  },
+  "search.exclude": {
+    "**/vendor/": true
+  },
+  "files.watcherExclude": {
+    "**/build/**": true
+  }
+}

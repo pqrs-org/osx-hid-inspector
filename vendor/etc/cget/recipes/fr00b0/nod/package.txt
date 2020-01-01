@@ -1,0 +1,1 @@
+../../../../../cget/pkg/pqrs-org__cget-recipes/install/etc/cget/recipes/fr00b0/nod/package.txt

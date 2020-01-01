@@ -1,0 +1,1 @@
+pqrs-org/cpp-osx-iokit_object_ptr@v2.2.11 --cmake header -H sha256:4fca1ae5fced18cb773ba3a919f755652b982e2b3fd08f6a990e232e4349e1b9

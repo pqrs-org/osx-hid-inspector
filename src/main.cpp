@@ -12,6 +12,9 @@ void inspect(pqrs::osx::iokit_registry_entry registry_entry) {
   if (auto name = registry_entry.find_name_in_plane(kIOServicePlane)) {
     std::cout << "name_in_plane: " << *name << std::endl;
   }
+  if (auto location = registry_entry.find_location_in_plane(kIOServicePlane)) {
+    std::cout << "location_in_plane: " << *location << std::endl;
+  }
 
   auto child_iterator = registry_entry.get_child_iterator(kIOServicePlane);
   while (true) {

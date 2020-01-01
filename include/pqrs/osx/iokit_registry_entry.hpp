@@ -92,6 +92,18 @@ public:
     return std::nullopt;
   }
 
+  std::optional<std::string> find_location_in_plane(const io_name_t plane) const {
+    if (registry_entry_) {
+      io_name_t location;
+      iokit_return r = IORegistryEntryGetLocationInPlane(*registry_entry_, plane, location);
+      if (r) {
+        return location;
+      }
+    }
+
+    return std::nullopt;
+  }
+
   operator bool(void) const {
     return registry_entry_;
   }

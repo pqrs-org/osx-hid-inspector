@@ -1,5 +1,0 @@
-pqrs-org/cpp-cf-array
-pqrs-org/cpp-cf-dictionary
-pqrs-org/cpp-cf-string
-pqrs-org/cpp-gcd
-pqrs-org/cpp-hash

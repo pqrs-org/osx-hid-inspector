@@ -21,6 +21,18 @@ void inspect(pqrs::osx::iokit_registry_entry registry_entry) {
     if (auto id = registry_entry.find_registry_entry_id()) {
       std::cout << "registry_entry_id: 0x" << std::hex << *id << std::dec << std::endl;
     }
+
+    auto it = registry_entry.get_parent_iterator(kIOServicePlane);
+    while (true) {
+      auto next = it.next();
+      if (!next) {
+        break;
+      }
+
+      if (auto class_name = next.class_name()) {
+        std::cout << "    parent_class_name: " << *class_name << std::endl;
+      }
+    }
   }
 
   auto child_iterator = registry_entry.get_child_iterator(kIOServicePlane);

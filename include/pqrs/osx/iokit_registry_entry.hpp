@@ -60,6 +60,21 @@ public:
     return result;
   }
 
+  iokit_iterator get_parent_iterator(const io_name_t plane) const {
+    iokit_iterator result;
+
+    if (registry_entry_) {
+      io_iterator_t it = IO_OBJECT_NULL;
+      kern_return r = IORegistryEntryGetParentIterator(*registry_entry_, plane, &it);
+      if (r) {
+        result = iokit_iterator(it);
+        IOObjectRelease(it);
+      }
+    }
+
+    return result;
+  }
+
   std::optional<std::string> find_location_in_plane(const io_name_t plane) const {
     if (registry_entry_) {
       io_name_t location;

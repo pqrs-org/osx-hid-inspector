@@ -8,7 +8,6 @@
 
 #include <optional>
 #include <pqrs/osx/iokit_object_ptr.hpp>
-#include <pqrs/osx/iokit_return.hpp>
 #include <pqrs/osx/iokit_types.hpp>
 
 namespace pqrs {

@@ -1,3 +1,4 @@
+pqrs-org/cpp-cf-cf_ptr
 pqrs-org/cpp-osx-iokit_hid_device
 pqrs-org/cpp-osx-iokit_object_ptr
-pqrs-org/cpp-osx-iokit_return
+pqrs-org/cpp-osx-kern_return

@@ -7,10 +7,11 @@
 // (See http://www.boost.org/LICENSE_1_0.txt)
 
 #include <optional>
+#include <pqrs/cf/cf_ptr.hpp>
 #include <pqrs/osx/iokit_iterator.hpp>
 #include <pqrs/osx/iokit_object_ptr.hpp>
-#include <pqrs/osx/iokit_return.hpp>
 #include <pqrs/osx/iokit_types.hpp>
+#include <pqrs/osx/kern_return.hpp>
 
 namespace pqrs {
 namespace osx {
@@ -46,7 +47,7 @@ public:
 
     if (registry_entry_) {
       io_iterator_t it = IO_OBJECT_NULL;
-      iokit_return r = IORegistryEntryGetChildIterator(*registry_entry_, plane, &it);
+      kern_return r = IORegistryEntryGetChildIterator(*registry_entry_, plane, &it);
       if (r) {
         result = iokit_iterator(it);
         IOObjectRelease(it);
@@ -59,7 +60,7 @@ public:
   std::optional<iokit_registry_entry_id> find_registry_entry_id(void) const {
     if (registry_entry_) {
       uint64_t id;
-      iokit_return r = IORegistryEntryGetRegistryEntryID(*registry_entry_, &id);
+      kern_return r = IORegistryEntryGetRegistryEntryID(*registry_entry_, &id);
       if (r) {
         return iokit_registry_entry_id(id);
       }
@@ -71,7 +72,7 @@ public:
   std::optional<std::string> find_name(void) const {
     if (registry_entry_) {
       io_name_t name;
-      iokit_return r = IORegistryEntryGetName(*registry_entry_, name);
+      kern_return r = IORegistryEntryGetName(*registry_entry_, name);
       if (r) {
         return name;
       }
@@ -83,7 +84,7 @@ public:
   std::optional<std::string> find_name_in_plane(const io_name_t plane) const {
     if (registry_entry_) {
       io_name_t name;
-      iokit_return r = IORegistryEntryGetNameInPlane(*registry_entry_, plane, name);
+      kern_return r = IORegistryEntryGetNameInPlane(*registry_entry_, plane, name);
       if (r) {
         return name;
       }
@@ -95,13 +96,28 @@ public:
   std::optional<std::string> find_location_in_plane(const io_name_t plane) const {
     if (registry_entry_) {
       io_name_t location;
-      iokit_return r = IORegistryEntryGetLocationInPlane(*registry_entry_, plane, location);
+      kern_return r = IORegistryEntryGetLocationInPlane(*registry_entry_, plane, location);
       if (r) {
         return location;
       }
     }
 
     return std::nullopt;
+  }
+
+  cf::cf_ptr<CFMutableDictionaryRef> find_properties(void) const {
+    cf::cf_ptr<CFMutableDictionaryRef> result;
+
+    if (registry_entry_) {
+      CFMutableDictionaryRef properties;
+      kern_return r = IORegistryEntryCreateCFProperties(*registry_entry_, &properties, kCFAllocatorDefault, kNilOptions);
+      if (r) {
+        result = properties;
+        CFRelease(properties);
+      }
+    }
+
+    return result;
   }
 
   operator bool(void) const {

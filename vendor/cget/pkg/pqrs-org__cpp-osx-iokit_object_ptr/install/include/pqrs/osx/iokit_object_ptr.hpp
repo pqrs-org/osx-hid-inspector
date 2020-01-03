@@ -1,6 +1,6 @@
 #pragma once
 
-// pqrs::osx::iokit_object_ptr v2.4
+// pqrs::osx::iokit_object_ptr v2.5
 
 // (C) Copyright Takayama Fumihiko 2018.
 // Distributed under the Boost Software License, Version 1.0.
@@ -8,7 +8,7 @@
 
 #include <IOKit/IOKitLib.h>
 #include <optional>
-#include <pqrs/osx/iokit_return.hpp>
+#include <pqrs/osx/kern_return.hpp>
 #include <string>
 
 namespace pqrs {
@@ -101,7 +101,7 @@ public:
   std::optional<std::string> class_name(void) const {
     if (p_) {
       io_name_t name;
-      iokit_return r = IOObjectGetClass(p_, name);
+      kern_return r = IOObjectGetClass(p_, name);
       if (r) {
         return name;
       }

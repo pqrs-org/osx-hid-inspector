@@ -27,7 +27,10 @@ public:
   explicit iokit_registry_entry(io_registry_entry_t registry_entry) : registry_entry_(registry_entry) {
   }
 
-  explicit iokit_registry_entry(iokit_object_ptr registry_entry) : registry_entry_(registry_entry) {
+  explicit iokit_registry_entry(const iokit_object_ptr& registry_entry) : registry_entry_(registry_entry) {
+  }
+
+  iokit_registry_entry(const iokit_registry_entry& other) : registry_entry_(other.registry_entry_) {
   }
 
   static iokit_registry_entry get_root_entry(mach_port_t master_port = kIOMasterPortDefault) {
@@ -57,12 +60,12 @@ public:
     return result;
   }
 
-  std::optional<iokit_registry_entry_id> find_registry_entry_id(void) const {
+  std::optional<std::string> find_location_in_plane(const io_name_t plane) const {
     if (registry_entry_) {
-      uint64_t id;
-      kern_return r = IORegistryEntryGetRegistryEntryID(*registry_entry_, &id);
+      io_name_t location;
+      kern_return r = IORegistryEntryGetLocationInPlane(*registry_entry_, plane, location);
       if (r) {
-        return iokit_registry_entry_id(id);
+        return location;
       }
     }
 
@@ -93,18 +96,6 @@ public:
     return std::nullopt;
   }
 
-  std::optional<std::string> find_location_in_plane(const io_name_t plane) const {
-    if (registry_entry_) {
-      io_name_t location;
-      kern_return r = IORegistryEntryGetLocationInPlane(*registry_entry_, plane, location);
-      if (r) {
-        return location;
-      }
-    }
-
-    return std::nullopt;
-  }
-
   cf::cf_ptr<CFMutableDictionaryRef> find_properties(void) const {
     cf::cf_ptr<CFMutableDictionaryRef> result;
 
@@ -118,6 +109,30 @@ public:
     }
 
     return result;
+  }
+
+  std::optional<std::string> find_path(const io_name_t plane) const {
+    if (registry_entry_) {
+      io_string_t path;
+      kern_return r = IORegistryEntryGetPath(*registry_entry_, plane, path);
+      if (r) {
+        return path;
+      }
+    }
+
+    return std::nullopt;
+  }
+
+  std::optional<iokit_registry_entry_id> find_registry_entry_id(void) const {
+    if (registry_entry_) {
+      uint64_t id;
+      kern_return r = IORegistryEntryGetRegistryEntryID(*registry_entry_, &id);
+      if (r) {
+        return iokit_registry_entry_id(id);
+      }
+    }
+
+    return std::nullopt;
   }
 
   operator bool(void) const {

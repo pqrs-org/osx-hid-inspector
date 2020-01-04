@@ -1,6 +1,6 @@
 #pragma once
 
-// pqrs::osx::iokit_service v0.0
+// pqrs::osx::iokit_service v1.0
 
 // (C) Copyright Takayama Fumihiko 2019.
 // Distributed under the Boost Software License, Version 1.0.
@@ -9,9 +9,7 @@
 #include <optional>
 #include <pqrs/cf/cf_ptr.hpp>
 #include <pqrs/osx/iokit_iterator.hpp>
-#include <pqrs/osx/iokit_object_ptr.hpp>
 #include <pqrs/osx/iokit_types.hpp>
-#include <pqrs/osx/kern_return.hpp>
 
 namespace pqrs {
 namespace osx {
@@ -28,9 +26,6 @@ public:
   }
 
   explicit iokit_registry_entry(const iokit_object_ptr& registry_entry) : registry_entry_(registry_entry) {
-  }
-
-  iokit_registry_entry(const iokit_registry_entry& other) : registry_entry_(other.registry_entry_) {
   }
 
   static iokit_registry_entry get_root_entry(mach_port_t master_port = kIOMasterPortDefault) {
@@ -148,6 +143,14 @@ public:
     }
 
     return std::nullopt;
+  }
+
+  bool in_plane(const io_name_t plane) const {
+    if (registry_entry_) {
+      return IORegistryEntryInPlane(*registry_entry_, plane);
+    }
+
+    return false;
   }
 
   operator bool(void) const {

@@ -1,37 +1,92 @@
+#include <iomanip>
 #include <ios>
 #include <iostream>
+#include <map>
+#include <pqrs/cf/json.hpp>
 #include <pqrs/osx/iokit_object_ptr.hpp>
 #include <pqrs/osx/iokit_registry_entry.hpp>
+#include <set>
 
 namespace {
+void collect_usage(std::map<int, std::set<int>>& result, const nlohmann::json& json) {
+  auto type = json["type"];
+  auto value = json["value"];
+
+  if (type == "dictionary") {
+    std::optional<int> usage_page;
+    std::optional<int> usage;
+
+    for (const auto& j : value) {
+      auto k = j["key"];
+      auto v = j["value"];
+
+      if (k["type"] == "string") {
+        if (k["value"] == "UsagePage") {
+          usage_page = v["value"].get<int>();
+        }
+        if (k["value"] == "Usage") {
+          usage = v["value"].get<int>();
+        }
+      }
+
+      collect_usage(result, v);
+    }
+
+    if (usage_page && usage) {
+      result[*usage_page].insert(*usage);
+    }
+  } else if (type == "array" ||
+             type == "dictionary" ||
+             type == "set") {
+    for (const auto& j : value) {
+      collect_usage(result, j);
+    }
+  }
+}
+
 void inspect(pqrs::osx::iokit_registry_entry registry_entry) {
   if (registry_entry.get().conforms_to("IOHIDDevice")) {
-    if (auto class_name = registry_entry.get().class_name()) {
-      std::cout << "class_name: " << *class_name << std::endl;
-    }
-    if (auto location = registry_entry.find_location_in_plane(kIOServicePlane)) {
-      std::cout << "location_in_plane: " << *location << std::endl;
-    }
-    if (auto name = registry_entry.find_name_in_plane(kIOServicePlane)) {
-      std::cout << "name_in_plane: " << *name << std::endl;
-    }
-    if (auto path = registry_entry.find_path(kIOServicePlane)) {
-      std::cout << "path: " << *path << std::endl;
-    }
     if (auto id = registry_entry.find_registry_entry_id()) {
       std::cout << "registry_entry_id: 0x" << std::hex << *id << std::dec << std::endl;
     }
 
-    auto it = registry_entry.get_parent_iterator(kIOServicePlane);
-    while (true) {
-      auto next = it.next();
-      if (!next) {
-        break;
+    if (auto properties = registry_entry.find_properties()) {
+      auto properties_json = pqrs::cf::cf_type_to_json(*properties);
+      std::map<int, std::set<int>> usage_pages;
+
+#if 0
+      std::cout << std::setw(4) << properties_json << std::endl;
+#else
+      for (const auto& p : properties_json["value"]) {
+        auto key = p["key"];
+        auto value = p["value"];
+        if (key["type"] == "string") {
+          if (key["value"] == "Manufacturer" ||
+              key["value"] == "Product") {
+            std::cout << "    " << key["value"] << ": " << p["value"]["value"] << std::endl;
+          }
+        }
+
+        collect_usage(usage_pages, p["value"]);
       }
 
-      if (auto class_name = next.class_name()) {
-        std::cout << "    parent_class_name: " << *class_name << std::endl;
+      for (const auto& [usage_page, usages] : usage_pages) {
+        std::cout << "    "
+                  << "usage_page:" << usage_page << " usages:[";
+
+        int index = 0;
+        for (const auto& usage : usages) {
+          if (index > 0) {
+            std::cout << ",";
+          }
+          ++index;
+
+          std::cout << usage;
+        }
+
+        std::cout << "]" << std::endl;
       }
+#endif
     }
   }
 

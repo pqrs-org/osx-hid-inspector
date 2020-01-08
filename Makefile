@@ -8,13 +8,13 @@ clean:
 	rm -rf build
 
 run-help:
-	./build/hid-inspector
+	@./build/hid-inspector
 
 run-output-all-properties-json:
-	./build/hid-inspector --output-all-properties-json
+	@./build/hid-inspector --output-all-properties-json
 
 run-output-usages:
-	./build/hid-inspector --output-usages
+	@./build/hid-inspector --output-usages
 
 update_vendor:
 	rm -rf vendor

@@ -10,7 +10,7 @@ namespace pqrs {
 namespace cf {
 namespace json {
 namespace impl {
-std::string get_type(const nlohmann::json& json) {
+inline std::string get_type(const nlohmann::json& json) {
   using namespace std::string_literals;
 
   pqrs::json::requires_object(json, "json");
@@ -26,7 +26,7 @@ std::string get_type(const nlohmann::json& json) {
   return type_json.get<std::string>();
 }
 
-nlohmann::json get_value_json(const nlohmann::json& json) {
+inline nlohmann::json get_value_json(const nlohmann::json& json) {
   using namespace std::string_literals;
 
   pqrs::json::requires_object(json, "json");
@@ -38,35 +38,35 @@ nlohmann::json get_value_json(const nlohmann::json& json) {
   return it.value();
 }
 
-void validate_array_value(const nlohmann::json& json) {
+inline void validate_array_value(const nlohmann::json& json) {
   pqrs::json::requires_array(json, "`value`");
 }
 
-void validate_boolean_value(const nlohmann::json& json) {
+inline void validate_boolean_value(const nlohmann::json& json) {
   pqrs::json::requires_boolean(json, "`value`");
 }
 
-void validate_data_value(const nlohmann::json& json) {
+inline void validate_data_value(const nlohmann::json& json) {
   pqrs::json::requires_array(json, "`value`");
 }
 
-void validate_dictionary_value(const nlohmann::json& json) {
+inline void validate_dictionary_value(const nlohmann::json& json) {
   pqrs::json::requires_array(json, "`value`");
 }
 
-void validate_number_value(const nlohmann::json& json) {
+inline void validate_number_value(const nlohmann::json& json) {
   pqrs::json::requires_number(json, "`value`");
 }
 
-void validate_set_value(const nlohmann::json& json) {
+inline void validate_set_value(const nlohmann::json& json) {
   pqrs::json::requires_array(json, "`value`");
 }
 
-void validate_string_value(const nlohmann::json& json) {
+inline void validate_string_value(const nlohmann::json& json) {
   pqrs::json::requires_string(json, "`value`");
 }
 
-nlohmann::json get_dictionary_key(const nlohmann::json& json) {
+inline nlohmann::json get_dictionary_key(const nlohmann::json& json) {
   using namespace std::string_literals;
 
   auto it = json.find("key");
@@ -77,7 +77,7 @@ nlohmann::json get_dictionary_key(const nlohmann::json& json) {
   return it.value();
 }
 
-nlohmann::json get_dictionary_value(const nlohmann::json& json) {
+inline nlohmann::json get_dictionary_value(const nlohmann::json& json) {
   using namespace std::string_literals;
 
   auto it = json.find("value");

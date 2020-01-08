@@ -1,113 +1,37 @@
-#include <iomanip>
-#include <ios>
-#include <iostream>
-#include <map>
-#include <pqrs/cf/json.hpp>
-#include <pqrs/osx/iokit_object_ptr.hpp>
-#include <pqrs/osx/iokit_registry_entry.hpp>
-#include <set>
+#include <cxxopts.hpp>
 
-namespace {
-#if 1
-void collect_usage(std::map<int, std::set<int>>& result, const nlohmann::json& json) {
-  if (json.is_object()) {
-    auto key = pqrs::json::find<std::string>(json, "key");
-    if (key == "Elements") {
-      if (auto value = pqrs::json::find_array(json, "value")) {
-        for (const auto& dictionary : value->value()) {
-          std::optional<int> usage_page;
-          std::optional<int> usage;
+void output_all_properties_json(void);
+void output_usages(void);
 
-          for (const auto& j : dictionary) {
-            auto k = pqrs::json::find<std::string>(j, "key");
-            auto v = pqrs::json::find<int>(j, "value");
+int main(int argc, char* argv[]) {
+  cxxopts::Options options("hid-inspector", "List hid devices");
+  options.add_options()("help", "Print help.");
 
-            if (k == "UsagePage") {
-              usage_page = v;
-            }
-            if (k == "Usage") {
-              usage = v;
-            }
+  options.add_options("Output format")                                        //
+      ("output-all-properties-json", "Output all properties in json format.") //
+      ("output-usages", "Output usage pages and usages.");                    //
 
-            collect_usage(result, j);
-          }
+  try {
+    auto parse_result = options.parse(argc, argv);
 
-          if (usage_page && usage) {
-            result[*usage_page].insert(*usage);
-          }
-        }
-      }
+    if (parse_result.count("output-all-properties-json")) {
+      output_all_properties_json();
+
+    } else if (parse_result.count("output-usages")) {
+      output_usages();
+
+    } else {
+      std::cout << options.help() << std::endl;
+      std::cout << "Examples:" << std::endl;
+      std::cout << "  hid-inspector --output-all-properties-json" << std::endl;
+      std::cout << "  hid-inspector --output-usages" << std::endl;
+      std::cout << std::endl;
     }
-  } else if (json.is_array()) {
-    for (const auto& j : json) {
-      collect_usage(result, j);
-    }
+
+  } catch (const cxxopts::OptionException& e) {
+    std::cout << "error parsing options: " << e.what() << std::endl;
+    return 1;
   }
-}
-#endif
-
-void inspect(pqrs::osx::iokit_registry_entry registry_entry) {
-  if (registry_entry.get().conforms_to("IOHIDDevice")) {
-    if (auto id = registry_entry.find_registry_entry_id()) {
-      std::cout << "registry_entry_id: " << *id << std::endl;
-    }
-
-    if (auto properties = registry_entry.find_properties()) {
-      auto properties_json = pqrs::cf::json::strip_cf_type_json(pqrs::cf::json::to_json(*properties));
-      // auto properties_json = pqrs::cf::json::to_json(*properties);
-      std::map<int, std::set<int>> usage_pages;
-
-#if 0
-      std::cout << std::setw(4) << properties_json << std::endl;
-#else
-      for (const auto& p : properties_json) {
-        auto key = p["key"];
-        auto value = p["value"];
-        if (key == "Manufacturer" ||
-            key == "Product") {
-          std::cout << "    " << key << ": " << value << std::endl;
-        }
-
-        collect_usage(usage_pages, p);
-      }
-
-      for (const auto& [usage_page, usages] : usage_pages) {
-        std::cout << "    "
-                  << "usage_page:" << usage_page << " usages:[";
-
-        int index = 0;
-        for (const auto& usage : usages) {
-          if (index > 0) {
-            std::cout << ",";
-          }
-          ++index;
-
-          std::cout << usage;
-        }
-
-        std::cout << "]" << std::endl;
-      }
-#endif
-    }
-
-    std::cout << std::endl;
-  }
-
-  auto child_iterator = registry_entry.get_child_iterator(kIOServicePlane);
-  while (true) {
-    auto next = child_iterator.next();
-    if (!next) {
-      break;
-    }
-
-    inspect(pqrs::osx::iokit_registry_entry(next));
-  }
-}
-} // namespace
-
-int main(void) {
-  auto registry_entry = pqrs::osx::iokit_registry_entry::get_root_entry();
-  inspect(registry_entry);
 
   return 0;
 }

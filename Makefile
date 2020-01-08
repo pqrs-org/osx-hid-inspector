@@ -7,8 +7,14 @@ all:
 clean:
 	rm -rf build
 
-run:
-	./build/osx-iokit-inspector
+run-help:
+	./build/hid-inspector
+
+run-output-all-properties-json:
+	./build/hid-inspector --output-all-properties-json
+
+run-output-usages:
+	./build/hid-inspector --output-usages
 
 update_vendor:
 	rm -rf vendor

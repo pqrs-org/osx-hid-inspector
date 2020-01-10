@@ -20,7 +20,8 @@ void make_json(const pqrs::osx::iokit_registry_entry& registry_entry, nlohmann::
       json["path"] = *path;
     }
     if (auto properties = registry_entry.find_properties()) {
-      json["properties"] = pqrs::cf::json::strip_cf_type_json(pqrs::cf::json::to_json(*properties));
+      json["properties"] = pqrs::cf::json::strip_cf_type_json(pqrs::cf::json::to_json(*properties),
+                                                              pqrs::cf::json::strip_option::collapse_dictionary);
     }
     if (auto id = registry_entry.find_registry_entry_id()) {
       json["registry_entry_id"] = type_safe::get(*id);

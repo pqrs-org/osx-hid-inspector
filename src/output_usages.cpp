@@ -8,32 +8,17 @@
 namespace {
 void collect_usage(std::map<int, std::set<int>>& result, const nlohmann::json& json) {
   if (json.is_object()) {
-    auto key = pqrs::json::find<std::string>(json, "key");
-    if (key == "Elements") {
-      if (auto value = pqrs::json::find_array(json, "value")) {
-        for (const auto& dictionary : value->value()) {
-          std::optional<int> usage_page;
-          std::optional<int> usage;
-
-          for (const auto& j : dictionary) {
-            auto k = pqrs::json::find<std::string>(j, "key");
-            auto v = pqrs::json::find<int>(j, "value");
-
-            if (k == "UsagePage") {
-              usage_page = v;
-            }
-            if (k == "Usage") {
-              usage = v;
-            }
-
-            collect_usage(result, j);
-          }
-
-          if (usage_page && usage) {
+    if (auto elements = pqrs::json::find_json(json, "Elements")) {
+      for (const auto& dictionary : elements->value()) {
+        if (auto usage_page = pqrs::json::find<int>(dictionary, "UsagePage")) {
+          if (auto usage = pqrs::json::find<int>(dictionary, "Usage")) {
             result[*usage_page].insert(*usage);
           }
         }
       }
+    }
+    for (const auto& [k, v] : json.items()) {
+      collect_usage(result, v);
     }
   } else if (json.is_array()) {
     for (const auto& j : json) {
@@ -51,20 +36,19 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
     }
 
     if (auto properties = registry_entry.find_properties()) {
-      auto properties_json = pqrs::cf::json::strip_cf_type_json(pqrs::cf::json::to_json(*properties));
+      auto properties_json = pqrs::cf::json::strip_cf_type_json(pqrs::cf::json::to_json(*properties),
+                                                                pqrs::cf::json::strip_option::collapse_dictionary);
 
       std::map<int, std::set<int>> usage_pages;
 
-      for (const auto& p : properties_json) {
-        auto key = p["key"];
-        auto value = p["value"];
-        if (key == "Manufacturer" ||
-            key == "Product") {
-          std::cout << "    " << key << ": " << value << std::endl;
-        }
-
-        collect_usage(usage_pages, p);
+      if (auto manufacturer = pqrs::json::find<std::string>(properties_json, "Manufacturer")) {
+        std::cout << "    Manufacturer: " << *manufacturer << std::endl;
       }
+      if (auto product = pqrs::json::find<std::string>(properties_json, "Product")) {
+        std::cout << "    Product: " << *product << std::endl;
+      }
+
+      collect_usage(usage_pages, properties_json);
 
       for (const auto& [usage_page, usages] : usage_pages) {
         std::cout << "    ------------------------------" << std::endl;
@@ -109,7 +93,7 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
           std::cout << "            " << usage << "," << std::endl;
         }
 
-        std::cout << "        ]" << std::endl;
+        std::cout << "        ] (" << usages.size() << " entries)" << std::endl;
       }
     }
 

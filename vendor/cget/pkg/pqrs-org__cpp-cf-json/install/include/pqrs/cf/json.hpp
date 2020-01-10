@@ -1,12 +1,13 @@
 #pragma once
 
-// pqrs::cf::json v2.1
+// pqrs::cf::json v2.2
 
 // (C) Copyright Takayama Fumihiko 2020.
 // Distributed under the Boost Software License, Version 1.0.
 // (See http://www.boost.org/LICENSE_1_0.txt)
 
-#include "impl/impl.hpp"
+#include "json/impl/impl.hpp"
+#include "json/strip_option.hpp"
 #include <pqrs/cf/array.hpp>
 #include <pqrs/cf/dictionary.hpp>
 #include <pqrs/cf/number.hpp>
@@ -230,7 +231,8 @@ inline cf_ptr<CFTypeRef> to_cf_type(const nlohmann::json& json) {
   return result;
 }
 
-inline nlohmann::json strip_cf_type_json(const nlohmann::json& json) {
+inline nlohmann::json strip_cf_type_json(const nlohmann::json& json,
+                                         type_safe::flag_set<strip_option> options = strip_option::none) {
   using namespace std::string_literals;
 
   nlohmann::json result;
@@ -243,7 +245,7 @@ inline nlohmann::json strip_cf_type_json(const nlohmann::json& json) {
 
     result = nlohmann::json::array();
     for (const auto& j : value_json) {
-      result.push_back(strip_cf_type_json(j));
+      result.push_back(strip_cf_type_json(j, options));
     }
 
   } else if (type == "boolean") {
@@ -259,16 +261,38 @@ inline nlohmann::json strip_cf_type_json(const nlohmann::json& json) {
   } else if (type == "dictionary") {
     impl::validate_dictionary_value(value_json);
 
-    result = nlohmann::json::array();
-    for (const auto& j : value_json) {
-      nlohmann::json k_json = impl::get_dictionary_key(j);
-      nlohmann::json v_json = impl::get_dictionary_value(j);
+    if (options & strip_option::collapse_dictionary) {
+      result = nlohmann::json::object();
 
-      result.push_back(nlohmann::json::object({
-          {"key", strip_cf_type_json(k_json)},
-          {"value", strip_cf_type_json(v_json)},
-      }));
+      for (const auto& j : value_json) {
+        nlohmann::json k_json = impl::get_dictionary_key(j);
+        nlohmann::json v_json = impl::get_dictionary_value(j);
+
+        std::string k_string;
+        auto k = strip_cf_type_json(k_json, options);
+        if (k.is_string()) {
+          k_string = k.get<std::string>();
+        } else {
+          k_string = k.dump();
+        }
+
+        result[k_string] = strip_cf_type_json(v_json, options);
+      }
+
+    } else {
+      result = nlohmann::json::array();
+
+      for (const auto& j : value_json) {
+        nlohmann::json k_json = impl::get_dictionary_key(j);
+        nlohmann::json v_json = impl::get_dictionary_value(j);
+
+        result.push_back(nlohmann::json::object({
+            {"key", strip_cf_type_json(k_json, options)},
+            {"value", strip_cf_type_json(v_json, options)},
+        }));
+      }
     }
+
   } else if (type == "number_float") {
     impl::validate_number_value(value_json);
 
@@ -284,7 +308,7 @@ inline nlohmann::json strip_cf_type_json(const nlohmann::json& json) {
 
     result = nlohmann::json::array();
     for (const auto& j : value_json) {
-      result.push_back(strip_cf_type_json(j));
+      result.push_back(strip_cf_type_json(j, options));
     }
 
   } else if (type == "string") {

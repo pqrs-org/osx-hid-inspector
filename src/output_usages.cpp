@@ -41,11 +41,16 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
 
       std::map<int, std::set<int>> usage_pages;
 
-      if (auto manufacturer = pqrs::json::find<std::string>(properties_json, "Manufacturer")) {
-        std::cout << "    Manufacturer: " << *manufacturer << std::endl;
-      }
-      if (auto product = pqrs::json::find<std::string>(properties_json, "Product")) {
-        std::cout << "    Product: " << *product << std::endl;
+      for (const auto& key : {
+               "Manufacturer",
+               "Product",
+               "DeviceUsagePairs",
+               "PrimaryUsagePage",
+               "PrimaryUsage",
+           }) {
+        if (auto it = pqrs::json::find_json(properties_json, key)) {
+          std::cout << "    " << key << ": " << it->value() << std::endl;
+        }
       }
 
       collect_usage(usage_pages, properties_json);

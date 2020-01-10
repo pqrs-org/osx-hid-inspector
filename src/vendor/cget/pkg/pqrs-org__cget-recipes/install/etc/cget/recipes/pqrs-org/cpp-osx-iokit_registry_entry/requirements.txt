@@ -1,0 +1,3 @@
+pqrs-org/cpp-cf-cf_ptr
+pqrs-org/cpp-osx-iokit_iterator
+pqrs-org/cpp-osx-iokit_types

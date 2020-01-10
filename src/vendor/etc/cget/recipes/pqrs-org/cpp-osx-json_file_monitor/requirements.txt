@@ -1,0 +1,1 @@
+../../../../../cget/pkg/pqrs-org__cget-recipes/install/etc/cget/recipes/pqrs-org/cpp-osx-json_file_monitor/requirements.txt

@@ -1,0 +1,1 @@
+fr00b0/nod@v0.5.0 --cmake header -H sha256:930f8efe86512213e9041fb76512c6cd4a4cd4682208c1cc0110cd9958f9d4a8

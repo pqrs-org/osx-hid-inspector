@@ -5,11 +5,29 @@
 
 osx-hid-inspector is a command line tool for macOS which shows human input devices (HID) status.
 
+## Supported systems
+
+macOS Sierra (10.12) or later.
+
+---
+
 ## Using a pre-built binary
 
 1.  Download `dist/hid-inspector.dmg`.
 2.  Open `hid-inspector.dmg`.
 3.  Use `/Volumes/hid-inspector/bin/hid-inspector`.
+
+### Building from source code
+
+Execute make command on the terminal.
+
+```shell
+make
+```
+
+`src/build_xcode/build/Release/hid-inspector` is a built file.
+
+---
 
 ## Usages
 

@@ -76,7 +76,7 @@ Note: This command takes about 10 seconds.
 
 #### Result of `--output-all-properties-json`
 
-```json
+```text
 [
     {
         "class_name": "AppleUserHIDDevice",
@@ -99,10 +99,11 @@ Note: This command takes about 10 seconds.
                 }
             ],
             "Elements": [
-                // ...
-            ]
+                ...
+            ],
+            ...
         }
     }
-    // ...
+    ...
 ]
 ```

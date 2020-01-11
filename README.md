@@ -13,13 +13,13 @@ osx-hid-inspector is a command line tool for macOS which shows human input devic
 
 ## Usages
 
-### Output usage pages, usages of all human input devices
+### Show usage pages, usages of all human input devices
 
 ```shell
 hid-inspector --output-usages
 ```
 
-#### Result
+#### Result of `--output-usages`
 
 ```text
 registry_entry_id: 4294985109
@@ -63,20 +63,46 @@ registry_entry_id: 4294985114
             -1 ... 255,
         ] (257 entries)
     ------------------------------
-    usage_page: 8
-        usages: [
-            1, 2, 3, 4, 5,
-        ] (5 entries)
-    ------------------------------
-    usage_page: 12
-        usages: [
-            184,
-        ] (1 entries)
-    ------------------------------
-    usage_page: 255
-        usages: [
-            3,
-        ] (1 entries)
-
 ...
+```
+
+### Show human input device properties in json
+
+```shell
+hid-inspector --output-all-properties-json
+```
+
+Note: This command takes about 10 seconds.
+
+#### Result of `--output-all-properties-json`
+
+```json
+[
+    {
+        "class_name": "AppleUserHIDDevice",
+        "name_in_plane": "AppleUserUSBHostHIDDevice",
+        "path": "IOService:/AppleACPIPlatformExpert/...",
+        "properties": {
+            "BootProtocol": 1,
+            "CFBundleIdentifier": "com.apple.AppleUserHIDDrivers",
+            "CFBundleIdentifierKernel": "com.apple.iokit.IOHIDFamily",
+            "CountryCode": 0,
+            "DebugState": {
+                "InputReportCount": 730767,
+                "InputReportTime": 4165427
+            },
+            "DeviceOpenedByEventSystem": true,
+            "DeviceUsagePairs": [
+                {
+                    "DeviceUsage": 6,
+                    "DeviceUsagePage": 1
+                }
+            ],
+            "Elements": [
+                // ...
+            ]
+        }
+    }
+    // ...
+]
 ```

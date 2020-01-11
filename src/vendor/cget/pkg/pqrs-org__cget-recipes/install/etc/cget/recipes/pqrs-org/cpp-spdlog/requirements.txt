@@ -1,4 +1,0 @@
-fr00b0/nod
-gabime/spdlog
-pqrs-org/cpp-dispatcher
-pqrs-org/cpp-filesystem

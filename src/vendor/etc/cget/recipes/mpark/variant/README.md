@@ -1,1 +1,0 @@
-../../../../../cget/pkg/pqrs-org__cget-recipes/install/etc/cget/recipes/mpark/variant/README.md

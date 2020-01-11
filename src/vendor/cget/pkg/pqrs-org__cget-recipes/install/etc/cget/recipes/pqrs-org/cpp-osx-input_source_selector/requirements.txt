@@ -1,2 +1,0 @@
-pqrs-org/cpp-dispatcher
-pqrs-org/cpp-osx-input_source

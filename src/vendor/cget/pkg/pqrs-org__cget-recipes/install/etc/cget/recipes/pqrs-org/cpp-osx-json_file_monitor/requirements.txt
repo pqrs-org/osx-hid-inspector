@@ -1,2 +1,0 @@
-nlohmann/json
-pqrs-org/cpp-osx-file_monitor

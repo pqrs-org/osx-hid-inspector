@@ -1,1 +1,0 @@
-../../../../cget/pkg/pqrs-org__cpp-cf-json/install/include/pqrs/cf/json/strip_option.hpp

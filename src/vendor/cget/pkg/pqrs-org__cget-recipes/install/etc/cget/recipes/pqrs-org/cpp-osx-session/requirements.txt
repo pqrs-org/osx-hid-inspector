@@ -1,5 +1,0 @@
-fr00b0/nod
-pqrs-org/cpp-cf-boolean
-pqrs-org/cpp-cf-number
-pqrs-org/cpp-cf-string
-pqrs-org/cpp-dispatcher

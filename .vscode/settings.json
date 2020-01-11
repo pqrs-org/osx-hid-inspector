@@ -1,13 +1,15 @@
 {
   "files.exclude": {
+    ".vscode/browse.vc.*": true,
+    "**/build_xcode/": true,
     "**/build/": true,
-    "**/vendor/cget/": true,
-    ".vscode/browse.vc.*": true
+    "**/vendor/cget/": true
   },
   "search.exclude": {
     "**/vendor/": true
   },
   "files.watcherExclude": {
+    "**/build_xcode/**": true,
     "**/build/**": true
   }
 }

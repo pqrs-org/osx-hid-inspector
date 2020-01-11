@@ -17,7 +17,7 @@ macOS Sierra (10.12) or later.
 2.  Open `hid-inspector.dmg`.
 3.  Use `/Volumes/hid-inspector/bin/hid-inspector`.
 
-### Building from source code
+## Building from source code
 
 Execute make command on the terminal.
 

@@ -3,7 +3,7 @@
 
 # osx-hid-inspector
 
-osx-hid-inspector is a command line tool for macOS which shows human input devices (HID) status.
+osx-hid-inspector is a command line tool for macOS which shows details of human input devices (HID).
 
 ## Supported systems
 
@@ -30,6 +30,33 @@ make
 ---
 
 ## Usages
+
+-   Show help
+
+    ```shell
+    hid-inspector --help
+    ```
+
+    -   Result:
+
+        ```text
+        Show details of human input devices.
+        Usage:
+        hid-inspector [OPTION...]
+
+            --help  Print help.
+
+        Output format options:
+            --version                 Output version.
+            --output-all-properties-json
+                                        Output all properties in json format.
+            --output-usages           Output usage pages and usages.
+
+        Examples:
+        hid-inspector --version
+        hid-inspector --output-all-properties-json
+        hid-inspector --output-usages
+        ```
 
 -   Show usage pages, usages of all human input devices
 

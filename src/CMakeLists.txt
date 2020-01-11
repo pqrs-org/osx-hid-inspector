@@ -19,6 +19,14 @@ add_executable(
   src/output_usages.cpp
 )
 
+set_target_properties(
+  hid-inspector
+  PROPERTIES
+
+  XCODE_ATTRIBUTE_ENABLE_HARDENED_RUNTIME
+  YES
+)
+
 target_link_libraries(
   hid-inspector
   "-framework CoreFoundation"

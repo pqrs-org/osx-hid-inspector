@@ -29,7 +29,7 @@ make
 
 ---
 
-## Usages
+## Usage
 
 -   Show help
 
@@ -117,7 +117,7 @@ make
     hid-inspector --output-all-properties-json
     ```
 
-    Note: This command takes about 10 seconds.
+    Note: This command outputs too much data, thus takes about 10 seconds.
 
     -   Result:
 

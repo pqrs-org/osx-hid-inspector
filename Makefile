@@ -25,3 +25,6 @@ notarize:
 
 staple:
 	xcrun stapler staple dist/hid-inspector.dmg
+
+check-staple:
+	xcrun stapler validate dist/hid-inspector.dmg

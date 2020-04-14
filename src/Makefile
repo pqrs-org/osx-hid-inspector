@@ -8,13 +8,13 @@ clean:
 	rm -rf build_xcode
 
 run-help:
-	@./build/hid-inspector
+	@./build_xcode/build/Release/hid-inspector
 
 run-output-all-properties-json:
-	@./build/hid-inspector --output-all-properties-json
+	@./build_xcode/build/Release/hid-inspector --output-all-properties-json
 
 run-output-usages:
-	@./build/hid-inspector --output-usages
+	@./build_xcode/build/Release/hid-inspector --output-usages
 
 update_vendor:
 	rm -rf vendor

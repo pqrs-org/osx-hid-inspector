@@ -19,6 +19,12 @@ macOS Sierra (10.12) or later.
 
 ## Building from source code
 
+### Requirements
+
+-   CMake (`brew install cmake`)
+
+### Steps
+
 Execute make command on the terminal.
 
 ```shell

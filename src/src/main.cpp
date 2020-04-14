@@ -4,7 +4,7 @@ void output_all_properties_json(void);
 void output_usages(void);
 
 namespace {
-const char* version = "1.0.0";
+const char* version = "1.0.1";
 }
 
 int main(int argc, char* argv[]) {

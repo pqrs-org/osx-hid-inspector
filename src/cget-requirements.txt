@@ -2,6 +2,7 @@ jarro2783/cxxopts
 pqrs-org/cpp-cf-cf_ptr
 pqrs-org/cpp-cf-json
 pqrs-org/cpp-osx-iokit_hid_device
+pqrs-org/cpp-osx-iokit_hid_manager
 pqrs-org/cpp-osx-iokit_iterator
 pqrs-org/cpp-osx-iokit_object_ptr
 pqrs-org/cpp-osx-iokit_registry_entry

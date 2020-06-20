@@ -14,7 +14,8 @@ int main(int argc, char* argv[]) {
   options.add_options("Output format")                                        //
       ("version", "Output version.")                                          //
       ("output-all-properties-json", "Output all properties in json format.") //
-      ("output-usages", "Output usage pages and usages.");                    //
+      ("output-usages", "Output usage pages and usages.")                     //
+      ;
 
   try {
     auto parse_result = options.parse(argc, argv);

@@ -1,18 +1,29 @@
 #include <iomanip>
 #include <map>
 #include <pqrs/cf/json.hpp>
+#include <pqrs/osx/iokit_hid_element.hpp>
 #include <pqrs/osx/iokit_registry_entry.hpp>
 #include <set>
 #include <sstream>
 
 namespace {
-void collect_usage(std::map<int, std::set<int>>& result, const nlohmann::json& json) {
+typedef std::map<pqrs::osx::iokit_hid_element_type,
+                 std::map<pqrs::hid::usage_page::value_t,
+                          std::set<pqrs::hid::usage::value_t>>>
+    collected_result_t;
+
+void collect_usage(collected_result_t& result, const nlohmann::json& json) {
   if (json.is_object()) {
     if (auto elements = pqrs::json::find_json(json, "Elements")) {
       for (const auto& dictionary : elements->value()) {
-        if (auto usage_page = pqrs::json::find<int>(dictionary, "UsagePage")) {
-          if (auto usage = pqrs::json::find<int>(dictionary, "Usage")) {
-            result[*usage_page].insert(*usage);
+        if (auto element_type = pqrs::json::find<int>(dictionary, "Type")) {
+          if (auto usage_page = pqrs::json::find<int>(dictionary, "UsagePage")) {
+            if (auto usage = pqrs::json::find<int>(dictionary, "Usage")) {
+              auto et = pqrs::osx::iokit_hid_element_type(*element_type);
+              auto up = pqrs::hid::usage_page::value_t(*usage_page);
+              auto u = pqrs::hid::usage::value_t(*usage);
+              result[et][up].insert(u);
+            }
           }
         }
       }
@@ -39,8 +50,6 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
       auto properties_json = pqrs::cf::json::strip_cf_type_json(pqrs::cf::json::to_json(*properties),
                                                                 pqrs::cf::json::strip_option::collapse_dictionary);
 
-      std::map<int, std::set<int>> usage_pages;
-
       for (const auto& key : {
                "Manufacturer",
                "Product",
@@ -53,52 +62,59 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
         }
       }
 
-      collect_usage(usage_pages, properties_json);
+      collected_result_t collected_result;
+      collect_usage(collected_result, properties_json);
 
-      for (const auto& [usage_page, usages] : usage_pages) {
-        std::cout << "    ------------------------------" << std::endl;
-        std::cout << "    usage_page: " << usage_page << std::endl;
-        std::cout << "        usages: [" << std::endl;
+      for (const auto& [element_type, usage_pages] : collected_result) {
+        std::cout << "    ==============================" << std::endl;
+        std::cout << "    element_type: " << pqrs::osx::get_iokit_hid_element_type_name(element_type) << std::endl;
+        for (const auto& [usage_page, usages] : usage_pages) {
+          std::cout << "        --------------------------" << std::endl;
+          std::cout << "        usage_page: " << usage_page << std::endl;
+          std::cout << "            usages: [" << std::endl;
 
-        // Join sequences
+          // Join sequences
 
-        std::vector<std::string> joined_usages;
-        {
-          std::optional<int> joined_first_usage;
-          std::optional<int> last_usage;
-          for (const auto& usage : usages) {
-            if (joined_first_usage &&
-                last_usage &&
-                usage == *last_usage + 1 &&
-                !joined_usages.empty()) {
-              joined_usages.pop_back();
+          std::vector<std::string> joined_usages;
+          {
+            std::optional<pqrs::hid::usage::value_t> joined_first_usage;
+            std::optional<pqrs::hid::usage::value_t> last_usage;
+            for (const auto& usage : usages) {
+              std::stringstream ss;
 
-              if (usage - *joined_first_usage < 8) {
-                std::stringstream ss;
-                for (int i = *joined_first_usage; i <= usage; ++i) {
-                  ss << std::to_string(i);
-                  if (i != usage) {
-                    ss << ", ";
+              if (joined_first_usage &&
+                  last_usage &&
+                  type_safe::get(usage) == type_safe::get(*last_usage) + 1 &&
+                  !joined_usages.empty()) {
+                joined_usages.pop_back();
+
+                if (type_safe::get(usage) - type_safe::get(*joined_first_usage) < 8) {
+                  for (int i = type_safe::get(*joined_first_usage); i <= type_safe::get(usage); ++i) {
+                    ss << std::to_string(i);
+                    if (i != type_safe::get(usage)) {
+                      ss << ", ";
+                    }
                   }
+                } else {
+                  ss << *joined_first_usage << " ... " << usage;
                 }
-                joined_usages.push_back(ss.str());
               } else {
-                joined_usages.push_back(std::to_string(*joined_first_usage) + " ... " + std::to_string(usage));
+                joined_first_usage = usage;
+                ss << usage;
               }
-            } else {
-              joined_first_usage = usage;
-              joined_usages.push_back(std::to_string(usage));
+
+              joined_usages.push_back(ss.str());
+
+              last_usage = usage;
             }
-
-            last_usage = usage;
           }
-        }
 
-        for (const auto& usage : joined_usages) {
-          std::cout << "            " << usage << "," << std::endl;
-        }
+          for (const auto& usage : joined_usages) {
+            std::cout << "                " << usage << "," << std::endl;
+          }
 
-        std::cout << "        ] (" << usages.size() << " entries)" << std::endl;
+          std::cout << "            ] (" << usages.size() << " entries)" << std::endl;
+        }
       }
     }
 

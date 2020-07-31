@@ -1,11 +1,10 @@
 all:
-	mkdir -p build_xcode \
-					&& cd build_xcode \
-					&& cmake -G Xcode .. \
-					&& xcodebuild -configuration Release SYMROOT="$(CURDIR)/build_xcode/build"
+	xcodegen
+	xcodebuild -configuration Release SYMROOT="$(CURDIR)/build"
 
 clean:
-	rm -rf build_xcode
+	rm -rf hid-inspector.xcodeproj
+	rm -rf build
 
 run-help:
 	@./build_xcode/build/Release/hid-inspector

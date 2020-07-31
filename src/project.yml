@@ -1,0 +1,21 @@
+name: hid-inspector
+options:
+  bundleIdPrefix: org.pqrs
+
+targets:
+  hid-inspector:
+    type: tool
+    platform: macOS
+    deploymentTarget: '10.12'
+    sources:
+      - path: src
+        compilerFlags:
+          - '-Wall'
+          - '-Werror'
+          - '-std=gnu++17'
+    dependencies:
+      - sdk: CoreFoundation.framework
+      - sdk: IOKit.framework
+    settings:
+        SYSTEM_HEADER_SEARCH_PATHS:
+            - vendor/include

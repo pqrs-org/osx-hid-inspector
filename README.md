@@ -21,7 +21,7 @@ macOS Sierra (10.12) or later.
 
 ### Requirements
 
--   CMake (`brew install cmake`)
+-   [XcodeGen](https://github.com/yonaskolb/XcodeGen)
 
 ### Steps
 

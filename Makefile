@@ -7,7 +7,7 @@ clean:
 dist: all
 	rm -rf tmp
 	mkdir -p tmp/hid-inspector/bin
-	install -m 755 src/build_xcode/build/Release/hid-inspector tmp/hid-inspector/bin
+	install -m 755 src/build/Release/hid-inspector tmp/hid-inspector/bin
 	bash scripts/codesign.sh tmp
 	hdiutil create -nospotlight hid-inspector.dmg -srcfolder tmp/hid-inspector -fs 'Journaled HFS+'
 	rm -rf tmp

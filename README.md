@@ -31,7 +31,7 @@ Execute make command on the terminal.
 make
 ```
 
-`src/build_xcode/build/Release/hid-inspector` is a built file.
+`src/build/Release/hid-inspector` is a built file.
 
 ---
 

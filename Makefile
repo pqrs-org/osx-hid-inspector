@@ -15,13 +15,12 @@ dist: all
 	mv hid-inspector.dmg dist
 
 notarize:
-	xcrun altool \
-					--notarize-app \
-					-t osx \
-					-f dist/hid-inspector.dmg \
-					--primary-bundle-id org.pqrs.hid-inspector \
-					-u 'tekezo@pqrs.org' \
-					-p '@keychain:pqrs.org-notarize-app'
+	xcrun notarytool \
+		submit dist/hid-inspector.dmg \
+		--keychain-profile "pqrs.org notarization" \
+		--wait
+	$(MAKE) staple
+	say "notarization completed"
 
 staple:
 	xcrun stapler staple dist/hid-inspector.dmg

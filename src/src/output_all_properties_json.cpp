@@ -4,6 +4,10 @@
 
 namespace {
 void make_json(const pqrs::osx::iokit_registry_entry& registry_entry, nlohmann::json& output) {
+  if (!registry_entry) {
+    return;
+  }
+
   if (registry_entry.get().conforms_to("IOHIDDevice")) {
     auto json = nlohmann::json::object();
 

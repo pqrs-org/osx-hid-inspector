@@ -39,6 +39,10 @@ void collect_usage(collected_result_t& result, const nlohmann::json& json) {
 }
 
 void output(pqrs::osx::iokit_registry_entry registry_entry) {
+  if (!registry_entry) {
+    return;
+  }
+
   if (registry_entry.get().conforms_to("IOHIDDevice")) {
     std::cout << "========================================" << std::endl;
 

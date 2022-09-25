@@ -57,6 +57,9 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
       for (const auto& key : {
                "Manufacturer",
                "Product",
+               "Transport",
+               "VendorID",
+               "ProductID",
                "DeviceUsagePairs",
                "PrimaryUsagePage",
                "PrimaryUsage",
@@ -74,7 +77,7 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
         std::cout << "    element_type: " << pqrs::osx::get_iokit_hid_element_type_name(element_type) << std::endl;
         for (const auto& [usage_page, usages] : usage_pages) {
           std::cout << "        --------------------------" << std::endl;
-          std::cout << "        usage_page: " << usage_page << std::endl;
+          std::cout << "        usage_page: " << usage_page << std::hex << " (0x" << usage_page << ")" << std::dec << std::endl;
           std::cout << "            usages: [" << std::endl;
 
           // Join sequences
@@ -94,7 +97,7 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
 
                 if (type_safe::get(usage) - type_safe::get(*joined_first_usage) < 8) {
                   for (int i = type_safe::get(*joined_first_usage); i <= type_safe::get(usage); ++i) {
-                    ss << std::to_string(i);
+                    ss << i << std::hex << " (0x" << i << ")" << std::dec;
                     if (i != type_safe::get(usage)) {
                       ss << ", ";
                     }
@@ -104,7 +107,7 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
                 }
               } else {
                 joined_first_usage = usage;
-                ss << usage;
+                ss << usage << std::hex << " (0x" << usage << ")" << std::dec;
               }
 
               joined_usages.push_back(ss.str());

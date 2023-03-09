@@ -1,4 +1,5 @@
 #include <cxxopts.hpp>
+#include <iostream>
 
 void output_all_properties_json(void);
 void output_usages(void);
@@ -38,7 +39,7 @@ int main(int argc, char* argv[]) {
       std::cout << std::endl;
     }
 
-  } catch (const cxxopts::OptionException& e) {
+  } catch (const cxxopts::exceptions::exception& e) {
     std::cout << "error parsing options: " << e.what() << std::endl;
     return 1;
   }

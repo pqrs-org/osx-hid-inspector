@@ -84,45 +84,49 @@ make
             PrimaryUsage: 2
             ==============================
             element_type: input_misc
-                --------------------------
-                usage_page: 1 (0x1)
-                    usages: [
-                        48 (0x30), 49 (0x31),
-                        56 (0x38),
-                    ] (3 entries)
-                --------------------------
-                usage_page: 12 (0xc)
-                    usages: [
-                        568 (0x238),
-                    ] (1 entries)
-                --------------------------
-                usage_page: 65280 (0xff00)
-                    usages: [
-                        1 (0x1), 2 (0x2), 3 (0x3),
-                        33 (0x21),
-                    ] (4 entries)
+                report_id: 1
+                    --------------------------
+                    usage_page: 1 (0x1)
+                        usages: [
+                            48 (0x30), 49 (0x31),
+                            56 (0x38),
+                        ] (3 entries)
+                    --------------------------
+                    usage_page: 12 (0xc)
+                        usages: [
+                            568 (0x238),
+                        ] (1 entries)
+                    --------------------------
+                    usage_page: 65280 (0xff00)
+                        usages: [
+                            1 (0x1),
+                        ] (1 entries)
+                report_id: 2
+                    --------------------------
+                    usage_page: 65280 (0xff00)
+                        usages: [
+                            2 (0x2),
+                        ] (1 entries)
+                report_id: 3
+                    --------------------------
+                    usage_page: 65280 (0xff00)
+                        usages: [
+                            3 (0x3),
+                        ] (1 entries)
+                report_id: 5
+                    --------------------------
+                    usage_page: 65280 (0xff00)
+                        usages: [
+                            33 (0x21),
+                        ] (1 entries)
             ==============================
             element_type: input_button
-                --------------------------
-                usage_page: 1 (0x1)
-                    usages: [
-                        129 (0x81), 130 (0x82), 131 (0x83),
-                    ] (3 entries)
-                --------------------------
-                usage_page: 7 (0x7)
-                    usages: [
-                        -1 ... 231,
-                    ] (233 entries)
-                --------------------------
-                usage_page: 9 (0x9)
-                    usages: [
-                        1 ... 24,
-                    ] (24 entries)
-                --------------------------
-                usage_page: 12 (0xc)
-                    usages: [
-                        -1 ... 1023,
-                    ] (1025 entries)
+                report_id: 1
+                    --------------------------
+                    usage_page: 9 (0x9)
+                        usages: [
+                            1 (0x1), 2 (0x2), 3 (0x3), 4 (0x4), 5 (0x5), 6 (0x6), 7 (0x7), 8 (0x8),
+                        ] (8 entries)
                 ...
         ```
 

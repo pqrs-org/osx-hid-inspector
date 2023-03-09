@@ -73,48 +73,57 @@ make
     -   Result:
 
         ```text
-        registry_entry_id: 4294985109
-            Manufacturer: "Apple Inc."
-            Product: "Apple Internal Keyboard / Trackpad"
-            DeviceUsagePairs: [{"DeviceUsage":11,"DeviceUsagePage":65280}]
-            PrimaryUsagePage: 65280
-            PrimaryUsage: 11
-            ------------------------------
-            usage_page: 0
-                usages: [
-                    -1, 0,
-                ] (2 entries)
-            ------------------------------
-            usage_page: 65280
-                usages: [
-                    -1,
-                    11,
-                ] (2 entries)
-
-        ========================================
-        registry_entry_id: 4294985114
-            Manufacturer: "Apple Inc."
-            Product: "Apple Internal Keyboard / Trackpad"
-            DeviceUsagePairs: [{"DeviceUsage":6,"DeviceUsagePage":1}]
+        registry_entry_id: 4294985173
+            Manufacturer: "Contour Design"
+            Product: "RollerMouse Mobile"
+            Transport: "USB"
+            VendorID: 2867
+            ProductID: 12288
+            DeviceUsagePairs: [{"DeviceUsage":2,"DeviceUsagePage":1},{"DeviceUsage":1,"DeviceUsagePage":1},{"DeviceUsage":6,"DeviceUsagePage":1},{"DeviceUsage":1,"DeviceUsagePage":12},{"DeviceUsage":48,"DeviceUsagePage":65280}]
             PrimaryUsagePage: 1
-            PrimaryUsage: 6
-            ------------------------------
-            usage_page: 0
-                usages: [
-                    -1, 0,
-                ] (2 entries)
-            ------------------------------
-            usage_page: 1
-                usages: [
-                    6,
-                ] (1 entries)
-            ------------------------------
-            usage_page: 7
-                usages: [
-                    -1 ... 255,
-                ] (257 entries)
-            ------------------------------
-        ...
+            PrimaryUsage: 2
+            ==============================
+            element_type: input_misc
+                --------------------------
+                usage_page: 1 (0x1)
+                    usages: [
+                        48 (0x30), 49 (0x31),
+                        56 (0x38),
+                    ] (3 entries)
+                --------------------------
+                usage_page: 12 (0xc)
+                    usages: [
+                        568 (0x238),
+                    ] (1 entries)
+                --------------------------
+                usage_page: 65280 (0xff00)
+                    usages: [
+                        1 (0x1), 2 (0x2), 3 (0x3),
+                        33 (0x21),
+                    ] (4 entries)
+            ==============================
+            element_type: input_button
+                --------------------------
+                usage_page: 1 (0x1)
+                    usages: [
+                        129 (0x81), 130 (0x82), 131 (0x83),
+                    ] (3 entries)
+                --------------------------
+                usage_page: 7 (0x7)
+                    usages: [
+                        -1 ... 231,
+                    ] (233 entries)
+                --------------------------
+                usage_page: 9 (0x9)
+                    usages: [
+                        1 ... 24,
+                    ] (24 entries)
+                --------------------------
+                usage_page: 12 (0xc)
+                    usages: [
+                        -1 ... 1023,
+                    ] (1025 entries)
+                ...
         ```
 
 -   Show human input device properties in json

@@ -8,8 +8,9 @@
 
 namespace {
 typedef std::map<pqrs::osx::iokit_hid_element_type,
-                 std::map<pqrs::hid::usage_page::value_t,
-                          std::set<pqrs::hid::usage::value_t>>>
+                 std::map<pqrs::hid::report_id::value_t,
+                          std::map<pqrs::hid::usage_page::value_t,
+                                   std::set<pqrs::hid::usage::value_t>>>>
     collected_result_t;
 
 void collect_usage(collected_result_t& result, const nlohmann::json& json) {
@@ -17,12 +18,15 @@ void collect_usage(collected_result_t& result, const nlohmann::json& json) {
     if (auto elements = pqrs::json::find_json(json, "Elements")) {
       for (const auto& dictionary : elements->value()) {
         if (auto element_type = pqrs::json::find<int>(dictionary, "Type")) {
-          if (auto usage_page = pqrs::json::find<int>(dictionary, "UsagePage")) {
-            if (auto usage = pqrs::json::find<int>(dictionary, "Usage")) {
-              auto et = pqrs::osx::iokit_hid_element_type(*element_type);
-              auto up = pqrs::hid::usage_page::value_t(*usage_page);
-              auto u = pqrs::hid::usage::value_t(*usage);
-              result[et][up].insert(u);
+          if (auto report_id = pqrs::json::find<int>(dictionary, "ReportID")) {
+            if (auto usage_page = pqrs::json::find<int>(dictionary, "UsagePage")) {
+              if (auto usage = pqrs::json::find<int>(dictionary, "Usage")) {
+                auto et = pqrs::osx::iokit_hid_element_type(*element_type);
+                auto r = pqrs::hid::report_id::value_t(*report_id);
+                auto up = pqrs::hid::usage_page::value_t(*usage_page);
+                auto u = pqrs::hid::usage::value_t(*usage);
+                result[et][r][up].insert(u);
+              }
             }
           }
         }
@@ -72,55 +76,58 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
       collected_result_t collected_result;
       collect_usage(collected_result, properties_json);
 
-      for (const auto& [element_type, usage_pages] : collected_result) {
+      for (const auto& [element_type, report_ids] : collected_result) {
         std::cout << "    ==============================" << std::endl;
         std::cout << "    element_type: " << pqrs::osx::get_iokit_hid_element_type_name(element_type) << std::endl;
-        for (const auto& [usage_page, usages] : usage_pages) {
-          std::cout << "        --------------------------" << std::endl;
-          std::cout << "        usage_page: " << usage_page << std::hex << " (0x" << usage_page << ")" << std::dec << std::endl;
-          std::cout << "            usages: [" << std::endl;
+        for (const auto& [report_id, usage_pages] : report_ids) {
+          std::cout << "        report_id: " << report_id << std::endl;
+          for (const auto& [usage_page, usages] : usage_pages) {
+            std::cout << "            --------------------------" << std::endl;
+            std::cout << "            usage_page: " << usage_page << std::hex << " (0x" << usage_page << ")" << std::dec << std::endl;
+            std::cout << "                usages: [" << std::endl;
 
-          // Join sequences
+            // Join sequences
 
-          std::vector<std::string> joined_usages;
-          {
-            std::optional<pqrs::hid::usage::value_t> joined_first_usage;
-            std::optional<pqrs::hid::usage::value_t> last_usage;
-            for (const auto& usage : usages) {
-              std::stringstream ss;
+            std::vector<std::string> joined_usages;
+            {
+              std::optional<pqrs::hid::usage::value_t> joined_first_usage;
+              std::optional<pqrs::hid::usage::value_t> last_usage;
+              for (const auto& usage : usages) {
+                std::stringstream ss;
 
-              if (joined_first_usage &&
-                  last_usage &&
-                  type_safe::get(usage) == type_safe::get(*last_usage) + 1 &&
-                  !joined_usages.empty()) {
-                joined_usages.pop_back();
+                if (joined_first_usage &&
+                    last_usage &&
+                    type_safe::get(usage) == type_safe::get(*last_usage) + 1 &&
+                    !joined_usages.empty()) {
+                  joined_usages.pop_back();
 
-                if (type_safe::get(usage) - type_safe::get(*joined_first_usage) < 8) {
-                  for (int i = type_safe::get(*joined_first_usage); i <= type_safe::get(usage); ++i) {
-                    ss << i << std::hex << " (0x" << i << ")" << std::dec;
-                    if (i != type_safe::get(usage)) {
-                      ss << ", ";
+                  if (type_safe::get(usage) - type_safe::get(*joined_first_usage) < 8) {
+                    for (int i = type_safe::get(*joined_first_usage); i <= type_safe::get(usage); ++i) {
+                      ss << i << std::hex << " (0x" << i << ")" << std::dec;
+                      if (i != type_safe::get(usage)) {
+                        ss << ", ";
+                      }
                     }
+                  } else {
+                    ss << *joined_first_usage << " ... " << usage;
                   }
                 } else {
-                  ss << *joined_first_usage << " ... " << usage;
+                  joined_first_usage = usage;
+                  ss << usage << std::hex << " (0x" << usage << ")" << std::dec;
                 }
-              } else {
-                joined_first_usage = usage;
-                ss << usage << std::hex << " (0x" << usage << ")" << std::dec;
+
+                joined_usages.push_back(ss.str());
+
+                last_usage = usage;
               }
-
-              joined_usages.push_back(ss.str());
-
-              last_usage = usage;
             }
-          }
 
-          for (const auto& usage : joined_usages) {
-            std::cout << "                " << usage << "," << std::endl;
-          }
+            for (const auto& usage : joined_usages) {
+              std::cout << "                    " << usage << "," << std::endl;
+            }
 
-          std::cout << "            ] (" << usages.size() << " entries)" << std::endl;
+            std::cout << "                ] (" << usages.size() << " entries)" << std::endl;
+          }
         }
       }
     }

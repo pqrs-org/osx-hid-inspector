@@ -64,6 +64,7 @@ void output(pqrs::osx::iokit_registry_entry registry_entry) {
                "Transport",
                "VendorID",
                "ProductID",
+               "DeviceAddress",
                "DeviceUsagePairs",
                "PrimaryUsagePage",
                "PrimaryUsage",

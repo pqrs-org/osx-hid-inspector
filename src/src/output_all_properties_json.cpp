@@ -26,6 +26,23 @@ void make_json(const pqrs::osx::iokit_registry_entry& registry_entry, nlohmann::
     if (auto properties = registry_entry.find_properties()) {
       json["properties"] = pqrs::cf::json::strip_cf_type_json(pqrs::cf::json::to_json(*properties),
                                                               pqrs::cf::json::strip_option::collapse_dictionary);
+
+      // Convert ReportDescriptor for https://eleccelerator.com/usbdescreqparser/
+      if (auto reportDescriptor = pqrs::json::find_array(json["properties"], "ReportDescriptor")) {
+        std::stringstream ss;
+
+        for (const auto& j : reportDescriptor->value()) {
+          if (ss.tellp() > 0) {
+            ss << " ";
+          }
+          ss << std::hex
+             << std::setfill('0')
+             << std::setw(2)
+             << static_cast<int>(j.get<int>());
+        }
+
+        json["properties"]["ReportDescriptor"] = ss.str();
+      }
     }
     if (auto id = registry_entry.find_registry_entry_id()) {
       json["registry_entry_id"] = type_safe::get(*id);

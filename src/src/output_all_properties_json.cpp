@@ -1,5 +1,6 @@
 #include <iomanip>
 #include <pqrs/cf/json.hpp>
+#include <pqrs/json.hpp>
 #include <pqrs/osx/iokit_registry_entry.hpp>
 
 namespace {
@@ -67,5 +68,5 @@ void output_all_properties_json(void) {
   auto json = nlohmann::json::array();
   make_json(pqrs::osx::iokit_registry_entry::get_root_entry(), json);
 
-  std::cout << std::setw(4) << json << std::endl;
+  std::cout << pqrs::json::pqrs_formatter::format(json, {.indent_size = 4}) << std::endl;
 }

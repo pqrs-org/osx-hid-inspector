@@ -6,7 +6,7 @@ targets:
   hid-inspector:
     type: tool
     platform: macOS
-    deploymentTarget: '10.12'
+    deploymentTarget: 13.0
     sources:
       - path: src
         compilerFlags:

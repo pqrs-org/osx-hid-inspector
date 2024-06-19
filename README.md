@@ -7,7 +7,7 @@ osx-hid-inspector is a command line tool for macOS for inspecting human input de
 
 ## Supported systems
 
-macOS Sierra (10.12) or later.
+macOS 13 Ventura or later.
 
 ---
 

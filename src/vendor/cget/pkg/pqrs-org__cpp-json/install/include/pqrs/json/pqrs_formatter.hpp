@@ -68,9 +68,9 @@ struct options {
 namespace impl {
 
 template <typename T>
-bool multi_line(const T& json,
-                const options& options,
-                std::optional<std::string> parent_object_key) {
+inline bool multi_line(const T& json,
+                       const options& options,
+                       std::optional<std::string> parent_object_key) {
   if (json.is_object()) {
     if (json.size() == 0) {
       return false;
@@ -113,20 +113,20 @@ bool multi_line(const T& json,
   return false;
 }
 
-void indent(std::ostringstream& ss,
-            const options& options,
-            int indent_level) {
+inline void indent(std::ostringstream& ss,
+                   const options& options,
+                   int indent_level) {
   for (int i = 0; i < options.indent_size * indent_level; ++i) {
     ss << ' ';
   }
 }
 
 template <typename T>
-void format(std::ostringstream& ss,
-            const T& json,
-            const options& options,
-            std::optional<std::string> parent_object_key,
-            int indent_level) {
+inline void format(std::ostringstream& ss,
+                   const T& json,
+                   const options& options,
+                   std::optional<std::string> parent_object_key,
+                   int indent_level) {
   if (json.is_object()) {
     if (!multi_line(json, options, parent_object_key)) {
       //
@@ -250,8 +250,8 @@ void format(std::ostringstream& ss,
 } // namespace impl
 
 template <typename T>
-std::string format(const T& json,
-                   const options& options) {
+inline std::string format(const T& json,
+                          const options& options) {
   std::ostringstream ss;
   impl::format(ss, json, options, std::nullopt, 0);
   return ss.str();

@@ -61,7 +61,8 @@ namespace pqrs_formatter {
 // ```
 
 struct options {
-  int indent_size;
+  std::optional<int> indent_size;
+  std::optional<nlohmann::json::error_handler_t> error_handler;
   std::unordered_set<std::string> force_multi_line_array_object_keys;
 };
 
@@ -116,7 +117,7 @@ inline bool multi_line(const T& json,
 inline void indent(std::ostringstream& ss,
                    const options& options,
                    int indent_level) {
-  for (int i = 0; i < options.indent_size * indent_level; ++i) {
+  for (int i = 0; i < options.indent_size.value_or(4) * indent_level; ++i) {
     ss << ' ';
   }
 }
@@ -243,7 +244,10 @@ inline void format(std::ostringstream& ss,
       ss << ']';
     }
   } else {
-    ss << json;
+    ss << json.dump(0,
+                    ' ',
+                    false,
+                    options.error_handler.value_or(nlohmann::json::error_handler_t::strict));
   }
 }
 

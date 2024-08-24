@@ -44,6 +44,30 @@ void make_json(const pqrs::osx::iokit_registry_entry& registry_entry, nlohmann::
 
         json["properties"]["ReportDescriptor"] = ss.str();
       }
+
+      // Make `Elements` compact
+      if (auto elements1 = pqrs::json::find_array(json["properties"], "Elements")) {
+        auto new_elements1 = nlohmann::json::array();
+
+        for (const auto& e1 : elements1->value()) {
+          new_elements1.push_back(e1);
+
+          if (auto elements2 = pqrs::json::find_array(new_elements1.back(), "Elements")) {
+            auto new_elements2 = nlohmann::json::array();
+
+            for (const auto& e2 : elements2->value()) {
+              auto s = e2.dump();
+              s.erase(std::remove(std::begin(s), std::end(s), '"'), std::end(s));
+
+              new_elements2.push_back(s);
+            }
+
+            new_elements1.back()["Elements"] = new_elements2;
+          }
+        }
+
+        json["properties"]["Elements"] = new_elements1;
+      }
     }
     if (auto id = registry_entry.find_registry_entry_id()) {
       json["registry_entry_id"] = type_safe::get(*id);
@@ -68,5 +92,11 @@ void output_all_properties_json(void) {
   auto json = nlohmann::json::array();
   make_json(pqrs::osx::iokit_registry_entry::get_root_entry(), json);
 
-  std::cout << pqrs::json::pqrs_formatter::format(json, {.indent_size = 4}) << std::endl;
+  std::cout << pqrs::json::pqrs_formatter::format(
+                   json,
+                   {
+                       .indent_size = 4,
+                       .force_multi_line_array_object_keys = {"Elements"},
+                   })
+            << std::endl;
 }

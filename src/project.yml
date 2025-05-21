@@ -18,4 +18,4 @@ targets:
       - sdk: IOKit.framework
     settings:
         SYSTEM_HEADER_SEARCH_PATHS:
-            - vendor/include
+            - vendor/vendor/include

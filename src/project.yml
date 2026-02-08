@@ -12,7 +12,7 @@ targets:
         compilerFlags:
           - '-Wall'
           - '-Werror'
-          - '-std=gnu++2a'
+          - '-std=c++23'
     dependencies:
       - sdk: CoreFoundation.framework
       - sdk: IOKit.framework

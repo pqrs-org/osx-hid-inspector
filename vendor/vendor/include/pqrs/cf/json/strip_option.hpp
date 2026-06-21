@@ -2,13 +2,11 @@
 
 // (C) Copyright Takayama Fumihiko 2020.
 // Distributed under the Boost Software License, Version 1.0.
-// (See http://www.boost.org/LICENSE_1_0.txt)
+// (See https://www.boost.org/LICENSE_1_0.txt)
 
 #include <type_safe/flag_set.hpp>
 
-namespace pqrs {
-namespace cf {
-namespace json {
+namespace pqrs::cf::json {
 enum class strip_option {
   none,
 
@@ -43,14 +41,12 @@ enum class strip_option {
 
   end_,
 };
-} // namespace json
-} // namespace cf
-} // namespace pqrs
+} // namespace pqrs::cf::json
 
 namespace type_safe {
 template <>
 struct flag_set_traits<pqrs::cf::json::strip_option> : std::true_type {
-  static constexpr std::size_t size() {
+  [[nodiscard]] static constexpr std::size_t size() noexcept {
     return static_cast<std::size_t>(pqrs::cf::json::strip_option::end_) + 1;
   }
 };

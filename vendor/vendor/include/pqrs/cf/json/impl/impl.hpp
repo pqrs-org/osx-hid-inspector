@@ -2,15 +2,12 @@
 
 // (C) Copyright Takayama Fumihiko 2020.
 // Distributed under the Boost Software License, Version 1.0.
-// (See http://www.boost.org/LICENSE_1_0.txt)
+// (See https://www.boost.org/LICENSE_1_0.txt)
 
 #include <pqrs/json.hpp>
 
-namespace pqrs {
-namespace cf {
-namespace json {
-namespace impl {
-inline std::string get_type(const nlohmann::json& json) {
+namespace pqrs::cf::json::impl {
+[[nodiscard]] inline std::string get_type(const nlohmann::json& json) {
   using namespace std::string_literals;
 
   pqrs::json::requires_object(json, "json");
@@ -26,7 +23,7 @@ inline std::string get_type(const nlohmann::json& json) {
   return type_json.get<std::string>();
 }
 
-inline nlohmann::json get_value_json(const nlohmann::json& json) {
+[[nodiscard]] inline nlohmann::json get_value_json(const nlohmann::json& json) {
   using namespace std::string_literals;
 
   pqrs::json::requires_object(json, "json");
@@ -66,7 +63,7 @@ inline void validate_string_value(const nlohmann::json& json) {
   pqrs::json::requires_string(json, "`value`");
 }
 
-inline nlohmann::json get_dictionary_key(const nlohmann::json& json) {
+[[nodiscard]] inline nlohmann::json get_dictionary_key(const nlohmann::json& json) {
   using namespace std::string_literals;
 
   auto it = json.find("key");
@@ -77,7 +74,7 @@ inline nlohmann::json get_dictionary_key(const nlohmann::json& json) {
   return it.value();
 }
 
-inline nlohmann::json get_dictionary_value(const nlohmann::json& json) {
+[[nodiscard]] inline nlohmann::json get_dictionary_value(const nlohmann::json& json) {
   using namespace std::string_literals;
 
   auto it = json.find("value");
@@ -87,7 +84,4 @@ inline nlohmann::json get_dictionary_value(const nlohmann::json& json) {
 
   return it.value();
 }
-} // namespace impl
-} // namespace json
-} // namespace cf
-} // namespace pqrs
+} // namespace pqrs::cf::json::impl
